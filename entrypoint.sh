@@ -16,6 +16,8 @@ chmod 444 ~/.ssh/known_hosts
 [ -f ~/.ssh/id_rsa ] && chmod 400 ~/.ssh/id_rsa
 chmod 500 ~/.ssh
 
+git config --global init.defaultBranch main
+
 # Set git identity from env vars
 if [ -n "$GIT_USER_NAME" ] && [ -n "$GIT_USER_EMAIL" ]; then
   git config --global user.name "$GIT_USER_NAME"

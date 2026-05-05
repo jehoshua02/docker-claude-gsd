@@ -51,6 +51,7 @@ services:
     tmpfs:
       - /tmp:uid=1000,gid=1000,noexec,nosuid
       - /home/claude/.ssh:uid=1000,gid=1000,noexec,nosuid
+      - /home/claude/.agents:uid=1000,gid=1000
 
     deploy:
       resources:
