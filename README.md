@@ -2,7 +2,7 @@
 
 A Docker image with Claude Code and GSD-2 pre-installed for autonomous project management. You bring your own workspace, settings, and credentials via volume mounts.
 
-**Image:** `jehoshua02/claude-gsd` on DockerHub
+**Image:** [`jehoshua02/claude-gsd`](https://hub.docker.com/r/jehoshua02/claude-gsd) on DockerHub
 
 ## What's in the image
 
