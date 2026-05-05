@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN npm install -g gsd-pi@latest
 
-RUN useradd -m -s /bin/bash claude
+RUN userdel -r node && useradd -m -s /bin/bash -u 1000 claude
 
 USER claude
 RUN curl -fsSL https://claude.ai/install.sh | bash
