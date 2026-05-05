@@ -1,0 +1,63 @@
+# Copy to compose.yml and edit to suit your setup.
+#
+# Usage:
+#   docker compose up -d
+#   docker compose exec claude bash
+#
+# Required:
+#   - ./volumes/workspace/ directory with files to work on
+#   - ./volumes/claude/ directory for Claude settings, history, OAuth credentials
+#   - ./volumes/gsd/ directory for GSD database and projections
+#
+# Optional:
+#   - ./ssh_key file for SSH access to private repos
+#   - GIT_USER_NAME and GIT_USER_EMAIL in .env for git commits
+
+# Uncomment to provide an SSH key for private repo access.
+# secrets:
+#   ssh_private_key:
+#     file: ./ssh_key
+
+services:
+  claude:
+    image: jehoshua02/claude-gsd:latest
+
+    stdin_open: true
+    tty: true
+
+    environment:
+      - GIT_USER_NAME=${GIT_USER_NAME:-}
+      - GIT_USER_EMAIL=${GIT_USER_EMAIL:-}
+
+    # Uncomment to mount SSH key for private repo access.
+    # secrets:
+    #   - ssh_private_key
+
+    volumes:
+      - ./volumes/workspace:/workspace
+      - ./volumes/claude:/home/claude/.claude
+      - ./volumes/gsd:/home/claude/.gsd
+
+    cap_drop:
+      - ALL
+
+    security_opt:
+      - no-new-privileges
+
+    read_only: true
+
+    tmpfs:
+      - /tmp:uid=1000,gid=1000
+      - /home/claude/.ssh:uid=1000,gid=1000
+
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+          cpus: "2"
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
