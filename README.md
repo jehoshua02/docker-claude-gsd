@@ -14,67 +14,54 @@ A Docker image with [Claude Code](https://claude.ai/code) and [GSD-2](https://gi
 - Pre-populated `known_hosts` for GitHub, GitLab, Bitbucket
 - Long-running entrypoint (`sleep infinity`) — exec in to use
 
-## Authentication
-
-Mount a directory to `/home/claude/.claude` and run `claude` inside the container to log in via OAuth on first use.
-
 ## Quick start
 
+Add the service to your project's `compose.yml`:
+
+```yaml
+services:
+  claude:
+    image: jehoshua02/claude-gsd:latest
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./workspace:/workspace
+      - ./claude:/home/claude/.claude
+      - ./gsd:/home/claude/.gsd
+```
+
+Then:
+
 ```bash
-cp compose.example.yml compose.yml
-mkdir -p volumes/workspace volumes/claude volumes/gsd
+mkdir -p workspace claude gsd
 docker compose up -d
 docker compose exec claude bash
 ```
 
-Inside the container, run `claude` to authenticate, then use `gsd` to manage your project.
+Inside the container, run `claude` to authenticate via OAuth — it will print a URL to open in your browser. After that, use `gsd` to manage your project.
 
-## Recommended: security-hardened run
+## Authentication
 
-```bash
-docker run -d \
-  -e GIT_USER_NAME="Your Name" \
-  -e GIT_USER_EMAIL="you@example.com" \
-  -v ./volumes/workspace:/workspace \
-  -v ./volumes/claude:/home/claude/.claude \
-  -v ./volumes/gsd:/home/claude/.gsd \
-  --cap-drop ALL \
-  --security-opt no-new-privileges \
-  --read-only \
-  --tmpfs /tmp:uid=1000,gid=1000 \
-  --tmpfs /home/claude/.ssh:uid=1000,gid=1000 \
-  --memory 4g \
-  --cpus 2 \
-  jehoshua02/claude-gsd:latest
-```
+Claude Code authenticates via OAuth. On first run inside the container:
 
-Then exec in:
-```bash
-docker exec -it <container> bash
-```
+1. Run `claude`
+2. It prints a URL — open it in your host browser
+3. Complete the login flow
+4. Credentials are saved in the mounted `/home/claude/.claude` volume and persist across restarts
 
-### What each flag does
+## Security-hardened compose
 
-| Flag | Purpose |
-|------|---------|
-| `--cap-drop ALL` | Drop all Linux capabilities. |
-| `--security-opt no-new-privileges` | Block privilege escalation via setuid/setgid. |
-| `--read-only` | Root filesystem is read-only. Writes only to volumes and tmpfs. |
-| `--tmpfs /tmp:uid=1000,gid=1000` | Writable scratch space (lost on container stop). |
-| `--tmpfs /home/claude/.ssh:uid=1000,gid=1000` | Entrypoint writes SSH config here at startup. |
-| `--memory 4g` | Cap memory usage. Adjust to your needs. |
-| `--cpus 2` | Cap CPU usage. Adjust to your needs. |
+See `compose.example.yml` for a fully hardened reference with:
 
-## Docker Compose
-
-See `compose.example.yml` for a fully commented reference. Copy and adapt:
-
-```bash
-cp compose.example.yml compose.yml
-# edit compose.yml
-docker compose up -d
-docker compose exec claude bash
-```
+| Feature | Purpose |
+|---------|---------|
+| `cap_drop: ALL` | Drop all Linux capabilities |
+| `no-new-privileges` | Block privilege escalation via setuid/setgid |
+| `read_only: true` | Root filesystem is read-only |
+| `tmpfs /tmp` | Writable scratch space (ephemeral) |
+| `tmpfs /home/claude/.ssh` | Entrypoint writes SSH config here at startup |
+| `restart: unless-stopped` | Auto-restart on crash |
+| Memory/CPU limits | Prevent resource exhaustion |
 
 ## Volume mounts
 
@@ -91,21 +78,25 @@ docker compose exec claude bash
 | `GIT_USER_NAME` | No | Git author name for commits. |
 | `GIT_USER_EMAIL` | No | Git author email for commits. |
 
+Git identity is configured at container startup via the entrypoint. It writes to `/tmp/.gitconfig` (ephemeral) so it must be set on every run.
+
 ## SSH key (optional)
 
-If you need SSH access (e.g. private git repos), provide your key as a Docker secret. The entrypoint checks `/run/secrets/ssh_private_key` at startup and copies it into `~/.ssh/id_rsa` with locked-down permissions.
+Provide an SSH key via Docker secrets for private repo access. The entrypoint checks `/run/secrets/ssh_private_key` at startup and copies it into `~/.ssh/id_rsa` with locked-down permissions.
 
-With Docker Compose (see `compose.example.yml`):
+With Docker Compose:
 ```yaml
 secrets:
   ssh_private_key:
     file: ./ssh_key
+
+services:
+  claude:
+    secrets:
+      - ssh_private_key
 ```
 
-With `docker run`:
-```bash
--v ~/.ssh/id_rsa:/run/secrets/ssh_private_key:ro
-```
+Both the top-level `secrets:` block and the service-level `secrets:` list must be present.
 
 ---
 

@@ -46,9 +46,11 @@ services:
 
     read_only: true
 
+    restart: unless-stopped
+
     tmpfs:
-      - /tmp:uid=1000,gid=1000
-      - /home/claude/.ssh:uid=1000,gid=1000
+      - /tmp:uid=1000,gid=1000,noexec,nosuid
+      - /home/claude/.ssh:uid=1000,gid=1000,noexec,nosuid
 
     deploy:
       resources:
