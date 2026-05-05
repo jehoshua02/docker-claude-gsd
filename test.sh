@@ -25,7 +25,7 @@ run_test "gsd --version" \
   docker compose -f compose.example.yml run --rm -T --entrypoint "" claude gsd --version
 
 run_test "claude --version" \
-  docker compose -f compose.example.yml run --rm -T claude --version
+  docker compose -f compose.example.yml run --rm -T --entrypoint "" claude claude --version
 
 run_test "cannot write to root filesystem" \
   bash -c '! docker compose -f compose.example.yml run --rm -T --entrypoint "" claude bash -c "touch /usr/local/hack"'
