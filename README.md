@@ -59,7 +59,7 @@ See `compose.example.yml` for a fully hardened reference with:
 | `no-new-privileges` | Block privilege escalation via setuid/setgid |
 | `read_only: true` | Root filesystem is read-only |
 | `tmpfs /tmp` | Writable scratch space (ephemeral) |
-| `tmpfs /home/claude/.ssh` | Entrypoint writes SSH config here at startup |
+| `tmpfs /home/claude` | Writable home directory (ephemeral); volume mounts overlay for persistent data |
 | `restart: unless-stopped` | Auto-restart on crash |
 | Memory/CPU limits | Prevent resource exhaustion |
 
