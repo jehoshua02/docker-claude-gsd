@@ -107,30 +107,11 @@ Both the top-level `secrets:` block and the service-level `secrets:` list must b
 - Docker
 - DockerHub account with push access to `jehoshua02/claude-gsd`
 
-### Build
+### Build, test, tag, push
 
 ```bash
-./build.sh 0.0.0
-```
-
-Builds, tests, and tags:
-- `jehoshua02/claude-gsd:0.0.0`
-- `jehoshua02/claude-gsd:latest`
-
-### Build and push
-
-```bash
-docker login
-./build.sh 0.0.0 --push
-```
-
-### Git tag convention
-
-After a successful push, tag the commit:
-
-```bash
-git tag v0.0.0
-git push origin v0.0.0
+./scripts/pre-merge.sh        # build + test
+./scripts/post-merge.sh patch # tag + push (bumps patch version)
 ```
 
 ### Versioning
