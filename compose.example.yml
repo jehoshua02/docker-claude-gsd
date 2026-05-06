@@ -49,7 +49,7 @@ services:
     restart: unless-stopped
 
     tmpfs:
-      - /tmp:uid=1000,gid=1000,noexec,nosuid
+      - /tmp:uid=1000,gid=1000,nosuid
       - /home/claude/.ssh:uid=1000,gid=1000,noexec,nosuid
       - /home/claude/.agents:uid=1000,gid=1000
 
