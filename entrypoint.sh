@@ -3,7 +3,7 @@ set -e
 
 # Restore known_hosts into tmpfs (build-time copy is wiped by tmpfs mount)
 mkdir -p ~/.ssh
-cp ~/known_hosts.bak ~/.ssh/known_hosts
+cp /etc/ssh/known_hosts.bak ~/.ssh/known_hosts
 
 # Set up SSH key if provided via Docker secret
 if [ -f /run/secrets/ssh_private_key ] && [ -s /run/secrets/ssh_private_key ]; then
