@@ -6,5 +6,6 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 VERSION=$(bash "$SCRIPT_DIR/next-version.sh" "$PART")
 
+bash "$SCRIPT_DIR/build.sh"
 bash "$SCRIPT_DIR/tag.sh" "$PART"
 bash "$SCRIPT_DIR/push.sh" "$VERSION"
