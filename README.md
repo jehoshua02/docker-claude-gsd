@@ -27,13 +27,12 @@ services:
     volumes:
       - ./workspace:/workspace
       - ./claude:/home/claude/.claude
-      - ./gsd:/home/claude/.gsd
 ```
 
 Then:
 
 ```bash
-mkdir -p workspace claude gsd
+mkdir -p workspace claude
 docker compose up -d
 docker compose exec claude bash
 ```
@@ -69,7 +68,6 @@ See `compose.example.yml` for a fully hardened reference with:
 |---------------|---------|
 | `/workspace` | Your project files. Claude and GSD read and write here. |
 | `/home/claude/.claude` | Claude state: settings, history, plugins, OAuth tokens. |
-| `/home/claude/.gsd` | GSD database and markdown projections. |
 
 ## Environment variables
 
