@@ -16,9 +16,6 @@ chmod 444 ~/.ssh/known_hosts
 [ -f ~/.ssh/id_rsa ] && chmod 400 ~/.ssh/id_rsa
 chmod 500 ~/.ssh
 
-# Clear GSD bundled agents so they're synced fresh from npm package
-rm -rf ~/.gsd/agent
-
 git config --global init.defaultBranch main
 
 # Set git identity from env vars
