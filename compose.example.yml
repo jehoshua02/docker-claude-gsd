@@ -7,7 +7,6 @@
 # Required:
 #   - ./volumes/workspace/ directory with files to work on
 #   - ./volumes/claude/ directory for Claude settings, history, OAuth credentials
-#   - ./volumes/gsd/ directory for GSD database and projections
 #
 # Optional:
 #   - ./ssh_key file for SSH access to private repos
@@ -36,7 +35,6 @@ services:
     volumes:
       - ./volumes/workspace:/workspace
       - ./volumes/claude:/home/claude/.claude
-      - ./volumes/gsd:/home/claude/.gsd
 
     cap_drop:
       - ALL
